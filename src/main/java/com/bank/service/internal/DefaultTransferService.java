@@ -11,6 +11,9 @@ import com.bank.repository.AccountRepository;
 import com.bank.service.FeePolicy;
 import com.bank.service.TransferService;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class DefaultTransferService implements TransferService {
 
     private final AccountRepository accountRepository;
@@ -30,6 +33,14 @@ public class DefaultTransferService implements TransferService {
     @Override
     @Transactional
     public TransferReceipt transfer(double amount, String srcAcctId, String dstAcctId) throws InsufficientFundsException {
+
+        Calendar calendat = Calendar.getInstance();
+        int hour = calendat.get(Calendar.HOUR_OF_DAY);
+        if(hour > 21 || hour < 6){
+            throw new IllegalArgumentException("Not available since 10 P.M - 6 A.M ");
+        }
+
+
         if (amount < minimumTransferAmount) {
             throw new IllegalArgumentException(format("transfer amount must be at least $%.2f", minimumTransferAmount));
         }
